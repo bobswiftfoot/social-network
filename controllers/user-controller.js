@@ -5,10 +5,6 @@ const userController =
     getAllUsers(req, res)
     {
         User.find({})
-            .populate({
-                path: 'friends',
-                select: '-__v'
-            })
             .select('-__v')
             .then(dbUserData => res.json(dbUserData))
             .catch(err =>
@@ -20,10 +16,18 @@ const userController =
     getUserById({ params }, res)
     {
         User.findOne({ _id: params.userId })
-            .populate({
+            .populate(
+                {
                 path: 'friends',
                 select: '-__v'
-            })
+                }
+            )
+            .populate(
+                {
+                path: 'thoughts',
+                select: '-__v'
+                }
+            )
             .select('-__v')
             .then(dbUserData =>
             {
@@ -89,10 +93,18 @@ const userController =
                         { $push: { friends: dbUserData._id } },
                         { new: true }
                 )            
-                .populate({
+                .populate(
+                    {
                     path: 'friends',
                     select: '-__v'
-                })
+                    }
+                )
+                .populate(
+                    {
+                    path: 'thoughts',
+                    select: '-__v'
+                    }
+                )
                 .select('-__v')
                 .then(dbUserData =>
                 {
@@ -123,12 +135,19 @@ const userController =
                 User.findOneAndUpdate(
                         { _id: params.userId },
                         { $pull: { friends: dbUserData._id } },
-                        { new: true }
-                )            
-                .populate({
+                        { new: true })            
+                .populate(
+                    {
                     path: 'friends',
                     select: '-__v'
-                })
+                    }
+                )
+                .populate(
+                    {
+                    path: 'thoughts',
+                    select: '-__v'
+                    }
+                )
                 .select('-__v')
                 .then(dbUserData =>
                 {

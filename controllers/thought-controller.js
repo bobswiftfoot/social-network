@@ -1,10 +1,11 @@
-const { Thought } = require('../models');
+const { Thought, User } = require('../models');
 
 const thoughtController =
 {
     getAllThoughts(req, res)
     {
-        Thought.find({})
+        Thought.find({})         
+            .select('-__v')
             .then(dbThoughtData => res.json(dbThoughtData))
             .catch(err =>
             {
@@ -14,7 +15,14 @@ const thoughtController =
     },
     getThoughtById({ params }, res)
     {
-        Thought.findOne({ _id: params.thoughtId })
+        Thought.findOne({ _id: params.thoughtId })  
+            .populate(
+                {
+                path: 'reactions',
+                select: '-__v'
+                }
+            )       
+            .select('-__v')
             .then(dbThoughtData =>
             {
                 if (!dbThoughtData)
@@ -33,7 +41,23 @@ const thoughtController =
     createThought({ body }, res)
     {
         Thought.create(body)
-            .then(dbThoughtData => res.json(dbThoughtData))
+            .then(dbThoughtData => 
+            {
+                User.findOneAndUpdate(
+                    { _id: body.userId },
+                    { $push: { thoughts: dbThoughtData._id }},
+                    { new: true })            
+                    .select('-__v')
+                    .then(dbUserData =>
+                    {
+                        if (!dbUserData)
+                        {
+                            res.status(404).json({ message: 'No user found with this FriendId!' });
+                            return;
+                        }
+                        res.json(dbUserData);
+                    })
+            })
             .catch(err => res.status(400).json(err));
     },
     updateThought({ params, body }, res)
