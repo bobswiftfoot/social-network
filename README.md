@@ -18,7 +18,7 @@
   You will need Node.js. Use "npm install" to install the packages.
 
   ## Usage
-  Walkthrough video: [Link]()
+  Walkthrough video: [Link](https://drive.google.com/file/d/1n-uzv7WMZiEUD2vHyRhevCNq5it1pfde/view)
   
   ## License
   Licensed under the [MIT](https://opensource.org/licenses/MIT) license. 
